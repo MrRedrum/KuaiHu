@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -31,6 +32,8 @@ import krelve.app.kuaihu.util.HttpUtils;
  */
 public class SplashActivity extends Activity {
     private ImageView iv_start;
+
+    private static String TAG = "SplashActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,21 +74,26 @@ public class SplashActivity extends Activity {
                         @Override
                         public void onSuccess(int i, Header[] headers, byte[] bytes) {
                             try {
-                                JSONObject jsonObject = new JSONObject(new String(bytes));
-                                String url = jsonObject.getString("img");
-                                HttpUtils.getImage(url, new BinaryHttpResponseHandler() {
-                                    @Override
-                                    public void onSuccess(int i, Header[] headers, byte[] bytes) {
-                                        saveImage(imgFile, bytes);
-                                        startActivity();
-                                    }
+                                String bytesString = new String(bytes);
 
-                                    @Override
-                                    public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
-                                        startActivity();
-                                    }
-                                });
+                                if(!bytesString.equals("")) {
+                                    JSONObject jsonObject = new JSONObject(bytesString);
+                                    String url = jsonObject.getString("img");
+                                    HttpUtils.getImage(url, new BinaryHttpResponseHandler() {
+                                        @Override
+                                        public void onSuccess(int i, Header[] headers, byte[] bytes) {
+                                            saveImage(imgFile, bytes);
+                                            startActivity();
+                                        }
 
+                                        @Override
+                                        public void onFailure(int i, Header[] headers, byte[] bytes, Throwable throwable) {
+                                            startActivity();
+                                        }
+                                    });
+                                } else {
+                                    startActivity();
+                                }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
