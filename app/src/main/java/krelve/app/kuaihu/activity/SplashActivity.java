@@ -43,8 +43,6 @@ public class SplashActivity extends Activity {
         setContentView(R.layout.splash);
         iv_start = (ImageView) findViewById(R.id.iv_start);
         initImage();
-
-
     }
 
     private void initImage() {
